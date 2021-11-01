@@ -1,67 +1,83 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Header = (props) => {
-  console.log(props)
-  return(
-    <h1>
-      <p>the name of the course is: {props.course}</p>
-    </h1>
-  )
-}
-const Content = (props) => {
-  return(
-    <div>
-      <p>{props.part} : {props.number}</p>
-    </div>
+const Button = (props) => {
+  return (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+    
+    
   )
 }
 
 
-
-
-const Total = (props) => {
-  return(
-    <div>
-      <p>the number of exercises is: {props.number}</p>
-    </div>
+const Statistics = (props) => {
+  if (props.value1 ===0 && props.value2===0 && props.value3===0)
+  {
+    return(
+      <div>No feedback given</div>
+    )
+  }
+  return (
+    <table>
+    <tbody>
+          <tr>
+          <td>{props.text1}</td>
+          <td>{props.value1}</td>
+          </tr>
+          <tr>
+          <td>{props.text2}</td>
+          <td>{props.value2}</td>
+          </tr>
+          <tr>
+            <td>{props.text3}</td>
+            <td>{props.value3}</td>
+          </tr>
+          <tr>
+            <td>all</td>
+            <td>{props.value1+props.value2+props.value3}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{(props.value1-props.value3)/(props.value1+props.value2+props.value3)}</td>
+            </tr>
+          <tr>
+            <td>positive</td
+            ><td>{100*(props.value1+props.value2)/(props.value1+props.value2+props.value3)}%</td>
+            </tr>
+    </tbody>
+    </table>
+    
   )
+
 }
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
+  // save clicks of each button to its own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
 
   return (
     <div>
-      <h1>Greeting</h1>
-      <Header course={course.name}/>
-      
-      <Content part={course.parts[0].name} number={course.parts[0].exercises}/>
-      <Content part={course.parts[1].name} number={course.parts[1].exercises}/>
-      <Content part={course.parts[2].name} number={course.parts[2].exercises}/>
-      
-      
+      <p> give feedback </p>
+      <Button handleClick={()=> setGood(good+1)} text="good"/>
+      <Button handleClick={()=> setBad(bad+1)} text="bad"/>
+      <Button handleClick={()=> setNeutral(neutral+1)} text="neutral"/>
+
+      <p>statistic</p>
       
       
-      <Total number={course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises}/>
+      <Statistics value1={good} value2={neutral} value3={bad} text1="good" text2="neutral" text3="bad"/>
+      
+          
     </div>
+    
   )
 }
 
+
+
+ 
 
 export default App
