@@ -1,83 +1,62 @@
-import React, { useState } from 'react'
+import React, {useState} from 'react'
+import Note from './Note'
 
-const Button = (props) => {
-  return (
-    <button onClick={props.handleClick}>
-      {props.text}
-    </button>
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes)
+  const [newNote, setNewNote] = useState(
+    'a new note...'
+  ) 
+  const [showAll, setShowAll] = useState(true)
+
+
+  const addNote = (event) => {
+    event.preventDefault()
+    const noteObject = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      id: notes.length + 1,
+    }
     
+
+    setNotes(notes.concat(noteObject))
+    setNewNote('')
     
-  )
 }
 
-
-const Statistics = (props) => {
-  if (props.value1 ===0 && props.value2===0 && props.value3===0)
-  {
-    return(
-      <div>No feedback given</div>
-    )
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+    
   }
-  return (
-    <table>
-    <tbody>
-          <tr>
-          <td>{props.text1}</td>
-          <td>{props.value1}</td>
-          </tr>
-          <tr>
-          <td>{props.text2}</td>
-          <td>{props.value2}</td>
-          </tr>
-          <tr>
-            <td>{props.text3}</td>
-            <td>{props.value3}</td>
-          </tr>
-          <tr>
-            <td>all</td>
-            <td>{props.value1+props.value2+props.value3}</td>
-          </tr>
-          <tr>
-            <td>average</td>
-            <td>{(props.value1-props.value3)/(props.value1+props.value2+props.value3)}</td>
-            </tr>
-          <tr>
-            <td>positive</td
-            ><td>{100*(props.value1+props.value2)/(props.value1+props.value2+props.value3)}%</td>
-            </tr>
-    </tbody>
-    </table>
-    
-  )
+  
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important )
 
-}
-
-const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
 
   return (
     <div>
-      <p> give feedback </p>
-      <Button handleClick={()=> setGood(good+1)} text="good"/>
-      <Button handleClick={()=> setBad(bad+1)} text="bad"/>
-      <Button handleClick={()=> setNeutral(neutral+1)} text="neutral"/>
-
-      <p>statistic</p>
-      
-      
-      <Statistics value1={good} value2={neutral} value3={bad} text1="good" text2="neutral" text3="bad"/>
-      
-          
+      <h1>Notes</h1>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all' }
+        </button>
+      </div>
+      <ul>
+        {notesToShow.map(note => 
+            <Note key={note.id} note={note} />
+        )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input value={newNote}
+          onChange={handleNoteChange}
+          />
+        <button type="submit">save</button>
+      </form>   
     </div>
-    
   )
+  
 }
-
-
-
- 
 
 export default App
