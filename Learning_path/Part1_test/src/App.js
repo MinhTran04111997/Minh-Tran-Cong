@@ -1,85 +1,131 @@
 import React, { useState, useEffect } from 'react'
-import Note from './Note'
-import noteService from './services/notes'
+import phoneBookservice from './services/phone_book'
 
 
 
 const App = () => {
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(false)
-
-  useEffect(() => {
-    noteService
+  const [persons, setPersons] = useState([{ 
+    "id": 1,
+    "name": "Arto Hellas", 
+    "number": "040-123456"
+  },
+  { 
+    "id": 2,
+    "name": "Ada Lovelace", 
+    "number": "39-44-5323523"
+  },
+  { 
+    "id": 3,
+    "name": "Dan Abramov", 
+    "number": "12-43-234345"
+  },
+  { 
+    "id": 4,
+    "name": "Mary Poppendieck", 
+    "number": "39-23-6423122"
+  }])
+  const [ newName, setNewName ] = useState('eg. Minh')
+  const [newNumber, setnewNumber] = useState('eg. 123456789')
+  const [searchName, setsearchName]=useState('')
+ useEffect(() => {
+  phoneBookservice
       .getAll()
-      .then(initialNotes => {
-      setNotes(initialNotes)
+      .then(initialPerson => {
+      setPersons(initialPerson)
   })
   }, [])
-  console.log('render', notes.length, 'notes')
-
-  const addNote = (event) => {
+  console.log('render', persons.length, 'notes')
+//add Name and Number
+const addName = (event) => {
     event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
+    const phoneBookobject = {
+      name: newName,
+      number: newNumber,
+      id: persons.length + 1,
     }
-
-    noteService
-      .create(noteObject)
-      .then(returnedNote => {
-        setNotes(notes.concat(returnedNote))
-        setNewNote('')
+    const same=persons.find(object => object.name.toLowerCase() === phoneBookobject.name.toLowerCase())
+    console.log(same)
+  if (same !== undefined){
+    window.alert(`${newName} is already added to phonebook`)
+  }
+  if(phoneBookobject.name===''||phoneBookobject.number===''){
+    window.alert(`name or number is not valid`)
+  }
+  phoneBookservice
+      .create(phoneBookobject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setnewNumber('')
       })
-  }
-
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-  }
-
-  const toggleImportanceOf = id => {
-    const note = notes.find(n => n.id === id)
-    const changedNote = { ...note, important: !note.important }
-  
-    noteService
-      .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-      })
-  }
-
-  const notesToShow = showAll
-  ? notes
-  : notes.filter(note => note.important)
-
+}
+const comPare = () => {
+  const newArray=[]
+  persons.map((person,i) => newArray[i]=person.name ) 
+  console.log(newArray)
+  if (searchName === ''){
   return (
+  persons.map((person) =>
+   <div key={person.id}>{person.name}: {person.number}</div>
+   )
+)
+  }
+if (searchName !== '') {
+  return (
+  persons.map((person,i) => {
+    console.log(newArray[i].toLowerCase().includes(searchName.toLowerCase()))
+    if (newArray[i].toLowerCase().includes(searchName.toLowerCase())){
+      console.log(persons[i].name)
+      console.log(persons[i].number)
+      return (
+        <div key={i}>{person.name}: {person.number}</div>
+      )
+     }
+    return (
+      <div key={i}></div>
+    )
+  })
+  )
+}
+}
+const handlesearchName = (event) => {
+  console.log(event.target.value)
+  setsearchName(event.target.value)
+}
+const handleNameChange = (event) => {
+    console.log(event.target.value)
+    setNewName(event.target.value)
+}
+const handleNumberChange = (event) => {
+    console.log(event.target.value)
+    setnewNumber(event.target.value)
+}
+return (
     <div>
-      <h1>Notes</h1>
+      <h2>Phonebook</h2>
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all' }
-        </button>
-      </div>   
-      <ul>
-        {notesToShow.map(note => 
-            <Note key={note.id} 
-            note={note} 
-            toggleImportance={() => toggleImportanceOf(note.id)}
-
-            />
-        )}
-      </ul>
-      <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleNoteChange}
-        />
-        <button type="submit">save</button>
-      </form>  
+        enter the name to search: 
+        <input value ={searchName}
+               onChange={handlesearchName}>
+        </input>
+      </div>
+      <h2>Add a new</h2>
+      <form onSubmit={addName}>
+        <div>
+          name: <input value={newName}
+          onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newNumber}
+          onChange={handleNumberChange} /> 
+          </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      <div >{comPare()}</div>
     </div>
   )
 }
-
 export default App

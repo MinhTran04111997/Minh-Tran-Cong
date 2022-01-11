@@ -16,11 +16,8 @@ const App = () => {
         setCountries(response.data)
       })
   }, [])
-
-  const Button = (props) => {
-  
-   
-    return (
+const Button = (props) => {
+   return (
       <button onClick={props.handleClick}>
         {props.text}
       </button>
@@ -29,12 +26,7 @@ const App = () => {
     )
   }
   
-  
-
-
-
 const comPare = () => {
-  
   const newArray=[]
   countries.map((country,i) => newArray[i]=country.name.official )
   console.log(newArray)
@@ -56,35 +48,23 @@ const comPare = () => {
   }
   if (searchName !== '') {
     if (count<=10){
-      
       return (
         countries.map((country,i) => {
-    
-        if (newArray[i].toLowerCase().includes(searchName.toLowerCase())=== true){
+          if (newArray[i].toLowerCase().includes(searchName.toLowerCase())=== true){
           if(count !== 1) {
             if (diffsubmit === subMitt){
-            
-            return (
+             return (
               <div>
                 <div
                 key={i}>{country.name.official} 
-                
-               </div>
+                </div>
                <Button handleClick={()=>{
-                
                  setsubMitt(!subMitt)
                  console.log(country.name)
-                
-                 }} text="show" />
-               
-
-
+                }} text="show" />
               </div>
-              
-              
             )
-            
-            }
+          }
             if (diffsubmit !== subMitt){
               const languages = Object.values(country.languages)
 
@@ -96,14 +76,9 @@ const comPare = () => {
               <div>Population: {country.population}</div>
               <h3>Languages:</h3>  {languages.map((language,i) => <li key={i}>{language}</li>)}
               <img src={country.flags.png} />
-
-
-            </div>
+              </div>
                   <Button handleClick={()=>{
-                        
                         setsubMitt(!subMitt)
-                        
-                       
                         }} text="exit show" />
                 </div>
               )
@@ -114,51 +89,34 @@ const comPare = () => {
               <div> {RenderCountry(country)}
               </div>
             )
-            
-            
           }
-      
-          
-        }
+       }
       return (
       < div key={i}></div>
         )
       })
     )
-    
-     
   }
     else if (count >=10){
       return (
         <div>Too many matches, specify another filter</div>
         )   
     }
-    
-    
-
+  }
 }
-}
-
-
 const RenderCountry = (country) => {
-  
   const languages = Object.values(country.languages)
           return (
-           
-            
             <div>
               <h1>{country.name.official}</h1>
               <div>Capital: {country.capital}</div>
               <div>Population: {country.population}</div>
               <h3>Languages:</h3>  {languages.map((language,i) => <li key={i}>{language}</li>)}
               <img src={country.flags.png} />
-
-
             </div>
             
           )
 }
-
 const handlesearchName = (event) => {
   console.log(event.target.value)
   setsearchName(event.target.value)
@@ -172,14 +130,8 @@ return (
         <input value ={searchName}
                onChange={handlesearchName}    ></input>
       </div>
-      
-      
-      
       <div >{comPare()}</div>
-      
-          
-      
-    </div>
+      </div>
   )
 }
 
